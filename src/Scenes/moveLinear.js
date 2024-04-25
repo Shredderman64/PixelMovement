@@ -5,6 +5,7 @@ class moveLinear extends Phaser.Scene {
 
         this.startX = 400;
         this.startY = 500;
+        this.bulletCooldown = 0;
     }
 
     preload() {
@@ -24,6 +25,9 @@ class moveLinear extends Phaser.Scene {
 
     update() {
         let my = this.my;
+        
+        if (this.bulletCooldown > 0)
+            this.bulletCooldown -= 1;
 
         if (this.leftKey.isDown) {
             this.playerSprite.x -= 10;
@@ -35,14 +39,15 @@ class moveLinear extends Phaser.Scene {
             if (this.playerSprite.x >= game.config.width - 20)
                 this.playerSprite.x = game.config.width - 20;
         }
-        if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
+        if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && this.bulletCooldown == 0) {
             my.sprite.push(this.add.sprite(this.playerSprite.x, 500, "bullet"));
+            this.bulletCooldown = 20;
         }
 
         for (let bullet in my.sprite) {
             my.sprite[bullet].y -= 10;
             if (my.sprite[bullet].y <= 0)
-              my.sprite[bullet].destroy();
+                my.sprite[bullet].destroy();
         }
     }
 }
